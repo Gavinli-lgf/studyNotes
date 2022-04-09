@@ -6,9 +6,9 @@
 | Rear wheel based feedback | Kinematic | [None] |
 | Front wheel based feedback | Kinematic | [None] |
 | Feedback linearization | Steering rate controlled kinematic | [输入-输出反馈线性化控制算法](https://zhuanlan.zhihu.com/p/344837550) |
-| Rear wheel based feedback | Kinematic | [None] |
-| Rear wheel based feedback | Kinematic | [None] |
-| Rear wheel based feedback | Kinematic | [None] |
+| Control Lyapunov design | Kinematic | [None] |
+| Linear MPC | C<sup>1</sup> (R<sup>n</sup> × R<sup>m</sup> ) model | [介绍](http://www.kostasalexis.com/linear-model-predictive-control.html) |
+| Nonlinear MPC | C<sup>1</sup> (R<sup>n</sup> × R<sup>m</sup> ) model | [介绍](http://apmonitor.com/do/index.php/Main/NonlinearControl) |
 
   Subsection V-A details a number of effective control strategies for path stabilization of the kinematic model, and subsection V-B2 discusses trajectory stabilization techniques. Predictive control strategies, discussed in subsection V-C, are effective for more complex vehicle models and can be applied to path and trajectory stabilization.
 
