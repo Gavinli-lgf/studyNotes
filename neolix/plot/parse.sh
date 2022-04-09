@@ -1,67 +1,44 @@
 #!/bin/bash
-# By yongcong.wang @ 30/03/2021
+# By guofeng.li @ 08/04/2022
 
-LOG_FILE="log/control.INFO"
+#change LOG_FILE to your log file
+LOG_FILE="log/control.log.INFO.20220407-104449.9422"
 
+#1 only support a whole word,multiple words like "after ramp filter steer angle" is wrong.
+#2 make sure how many times did the word appear in one circle, means appear different times in log file.
+#3 you can analysis one or several words once.
 WORDS=(
   # longitude
-  "current_speed"
-  "filted_current_speed"
-  "station"
-  "lateral"
-  "path_remain"
-  "low_speed_control"
-  "target_station"
+  #"path_remain"
   "target_speed"
-  "filted_target_speed"
-  "speed_error"
-  "distance_error"
-  "pitch_angle_slope"
-  "speed_compensation"
-  "station_compensation"
-  "error_limit"
-  "compute_value"
-  "control_value"
-  "filted_control_value"
-  "compensation_throttle"
-  "clamp_compensation_throttle"
-  "ramp_comp_throttle_brake"
-  "throttle"
-  "brake"
-  "throttle_final"
-  "brake_final"
+  "curr_station"
+  "target_station"
+  #"speed_error"
+  "diastance_error"
+  "current_acc"
+  "current_calc_throttle"
+  "current_calac_brake"
 
   # lateral
-  "is_current_backward"
-  "steer_angle_feedbackterm"
-  "steer_angle_feedforwardterm"
-  "steer_angle"
-  "steer_angle_final"
-  "loc_x"
-  "loc_y"
-  "lateral_compensation"
-  "current_lateral_error"
-  "f_current_lateral_error"
-  "ff_current_lateral_error"
-  "current_curvature"
-  "current_ref_heading"
-  "current_heading"
-  "current_heading_error"
-  "heading_error_rate"
-  "lateral_error_rate"
-  "veh_angle"
-  "lat_angle"
-  "head_angle"
-  "steer_angle"
+  #"curr_steer"
 )
 
 [ ! -d data ] && mkdir data
 save_name="data/$(date -u +"%Y%m%d-%H%M%S").csv"
-touch ${save_name}.csv
+touch ${save_name}
 
+#print every result of every command executed after "set -x"
+#set -x
+
+#test command in console is:
+#egrep -o 'current_acc: -*[[:digit:]]{1,}\.[[:digit:]]{1,}' log/control.log.INFO.20220407-104449.9422 | 
+#     egrep -o '\-*[[:digit:]]{1,}\.[[:digit:]]{1,}'
+#command explain:'current_acc: -*[[:digit:]]{1,}\.[[:digit:]]{1,}'表示一个字符串，以“urrent_acc: ”开头，负号-的个数>=0，紧接着数字的个数>=1，再接1个小数点.，在接数字的个数>=1
+#reference url: https://www.cyberciti.biz/faq/grep-regular-expressions/
 for word in "${WORDS[@]}"; do
-  grep "XXX: ${word}:" ${LOG_FILE} \
-      | awk -va=${word} 'BEGIN{print a}; {print $7}' \
+  egrep -o "${word}: -*"'[[:digit:]]{1,}\.[[:digit:]]{1,}' ${LOG_FILE} \
+      | egrep -o '\-*[[:digit:]]{1,}\.[[:digit:]]{1,}' \
+      | awk -va=${word} 'BEGIN{print a}; {print $1}' \
       | paste -d, ${save_name} - > .tmp && cp .tmp ${save_name}
 done
 

@@ -100,11 +100,11 @@ def plot_lateral(data):
     #"heading_error_rate",
     #"lateral_error_rate",
     ]
-    ref = pd.read_csv("./ref_line.csv").drop(
-            labels=range(203), axis=0).reset_index(drop=True)
-    error = pd.concat([data, ref], axis=1)
-    ax = error.plot(x="loc_x", y="loc_y")
-    ax = error.plot(x="ref_x", y="ref_y", ax=ax)
+    #ref = pd.read_csv("./ref_line.csv").drop(
+    #        labels=range(203), axis=0).reset_index(drop=True)
+    #error = pd.concat([data, ref], axis=1)
+    #ax = error.plot(x="loc_x", y="loc_y")
+    #ax = error.plot(x="ref_x", y="ref_y", ax=ax)
     #plt.show()
 
     fill_err(data, ref)
@@ -121,7 +121,7 @@ def plot_lateral(data):
 
 def main():
     #data = pd.read_csv("./DATA.csv")
-    data = pd.read_csv("./data/20210508-081001.csv")
+    data = pd.read_csv("./data/20220407-080101.csv")
     #plot_longitude(data)
     plot_lateral(data)
 
