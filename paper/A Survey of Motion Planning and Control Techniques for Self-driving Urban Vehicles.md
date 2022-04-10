@@ -25,3 +25,22 @@
 * Front wheel position based feedback: 
 
   Front wheel output based control. The control strategy is to point the front wheel towards the path so that the component of the front wheel’s velocity normal to the path is proportional to the distance to the path. This is achieved locally and yields local exponential convergence.
+### Trajectory Tracking Control for the Kinematic Model
+1. Control Lyapunov based design
+2. Output feedback linearization
+
+* Control Lyapunov based design:
+* Output feedback linearization:
+
+### Predictive Control Approaches
+
+1. Unconstrained MPC with Kinematic Models
+2. Path Tracking Controllers
+3. Trajectory Tracking Controllers
+
+
+* Unconstrained MPC with Kinematic Models:
+* Path Tracking Controllers:
+* Trajectory Tracking Controllers
+
+###  Linear Parameter Varying Controllers
