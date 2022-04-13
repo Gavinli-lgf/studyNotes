@@ -6,9 +6,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import math
 
-
+# calculate a column which contains the lateral err between each point (loc_x, loc_y) and ref_line. Then insert that column into data. 
 def fill_err(data, ref):
-    # first point
+    # first point(x,y)  (i.g :x is value of 0 row and "loc_x" column,the same to y)
+    # find the nearest point in ref to point(x,y),record the min distance "min_val" and point index "min_idx".
     x = data.at[0, "loc_x"]
     y = data.at[0, "loc_y"]
     #print(data["loc_x"])
@@ -100,17 +101,25 @@ def plot_lateral(data):
     #"heading_error_rate",
     #"lateral_error_rate",
     ]
-    #ref = pd.read_csv("./ref_line.csv").drop(
-    #        labels=range(203), axis=0).reset_index(drop=True)
-    #error = pd.concat([data, ref], axis=1)
-    #ax = error.plot(x="loc_x", y="loc_y")
-    #ax = error.plot(x="ref_x", y="ref_y", ax=ax)
+
+    #read dataframe from file ./ref_line.csv,drop rows form 0 to 203,and then reset index(row index)
+    #concatenate data and ref along columns direction
+    #plot (loc_x, loc_y) and (ref_x, ref_y) on the same figure
+    ref = pd.read_csv("./ref_line.csv").drop(
+            labels=range(203), axis=0).reset_index(drop=True)
+    error = pd.concat([data, ref], axis=1)
+    ax = error.plot(x="loc_x", y="loc_y")
+    ax = error.plot(x="ref_x", y="ref_y", ax=ax)
     #plt.show()
 
+    # calculate lateral_err between every (loc_x, loc_y) and ref line,and insert lateral_err into data.
     fill_err(data, ref)
 
+    # use row index as x axis, element in list lat_list as y axis to plot a figure.
     data.plot(y=lat_list)
-    plt.show()
+    plt.show()  # show all the figures above at the same time
+    
+    # show statistics info of lat_err in data
     lat_err = data["lat_err"][400:8360]
     print("max_err:", lat_err.max())
     print("less than 0.2 percent: ",
