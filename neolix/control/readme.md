@@ -14,3 +14,9 @@
 1. 正向行驶、倒车行驶时的control逻辑与运算方式都是相同的吗？
 2. SteerComponentCalc()中，对于倒车时，steer_angle_lateral_contribution_变量的处理原理要搞清。
 3. 
+
+
+# apollo源码解析
+* [Apollo control模块横向控制原理及核心代码逐行解析](https://blog.csdn.net/weixin_39199083/article/details/122228076)
+
+
