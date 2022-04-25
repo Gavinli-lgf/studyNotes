@@ -9,10 +9,15 @@
 8. lqr_lateral_controller_test.cpp -> 中的global_state变量可删除、对应global_state.txt文件可删除。
 9. LateralAutoCompensation()实际并没有调用，是否可以删除？还涉及的相关配置、变量、函数有：lateral_error_low_threshold、lateral_error_high_threshold、lateral_error_low_threshold_、InitializeLateralCompensation()。
 
+20220425 ：
+10. GetAbsoluteTimeLateralAndHeadingError() 中if (delta_time < 0.0) 后只保留LOG_WARN()，delta_time的计算删除。
+11. StateUpdate()中，lateral_error_rate_、heading_error_rate_两者的计算可以封装为子函数。
+
 ## lqr_lateral_controller理论知识需要完善的地方
 1. 正向行驶、倒车行驶时的control逻辑与运算方式都是相同的吗？
 2. SteerComponentCalc()中，对于倒车时，steer_angle_lateral_contribution_变量的处理原理要搞清。
-3. 
+3. 预瞄点与这个(record_x,record_y)点的0.1s的关系要搞清
+4. lateral_error_rate_、heading_error_rate_两者的计算公式待搞清？...（参照代码）
 
 
 # apollo源码解析
