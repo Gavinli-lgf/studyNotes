@@ -26,17 +26,17 @@
 
 # Eigen的使用
 * 矩阵的定义形式有2种：Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols>、Matrix2d；
-1. Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols>的形式，只要指明3个参数_Scalar、_Rows、_Cols即可，其他的可不管。
-2. Matrix2d也有多种形式，具体形式如下：
-  * \li \c Matrix2d is a 2x2 square matrix of doubles (\c Matrix<double, 2, 2>)
-  * \li \c Vector4f is a vector of 4 floats (\c Matrix<float, 4, 1>)
-  * \li \c RowVector3i is a row-vector of 3 ints (\c Matrix<int, 1, 3>)
+  1. Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols>的形式，只要指明3个参数_Scalar、_Rows、_Cols即可，其他的可不管。
+  2. Matrix2d也有多种形式，具体形式如下：
+  *\li \c Matrix2d is a 2x2 square matrix of doubles (\c Matrix<double, 2, 2>)
+  *\li \c Vector4f is a vector of 4 floats (\c Matrix<float, 4, 1>)
+  *\li \c RowVector3i is a row-vector of 3 ints (\c Matrix<int, 1, 3>)
   *
-  * \li \c MatrixXf is a dynamic-size matrix of floats (\c Matrix<float, Dynamic, Dynamic>)
-  * \li \c VectorXf is a dynamic-size vector of floats (\c Matrix<float, Dynamic, 1>)
+  *\li \c MatrixXf is a dynamic-size matrix of floats (\c Matrix<float, Dynamic, Dynamic>)
+  *\li \c VectorXf is a dynamic-size vector of floats (\c Matrix<float, Dynamic, 1>)
   *
-  * \li \c Matrix2Xf is a partially fixed-size (dynamic-size) matrix of floats (\c Matrix<float, 2, Dynamic>)
-  * \li \c MatrixX3d is a partially dynamic-size (fixed-size) matrix of double (\c Matrix<double, Dynamic, 3>)
+  *\li \c Matrix2Xf is a partially fixed-size (dynamic-size) matrix of floats (\c Matrix<float, 2, Dynamic>)
+  *\li \c MatrixX3d is a partially dynamic-size (fixed-size) matrix of double (\c Matrix<double, Dynamic, 3>)
 注：MatrixXf is a dynamic-size matrix of floats (\c Matrix<float, Dynamic, Dynamic>) //说明“MatrixXf”是一个动态矩阵，但不一定是方阵。
 * 矩阵的访问：You can access elements of vectors and matrices using normal subscripting:
   *Eigen::VectorXd v(10);
