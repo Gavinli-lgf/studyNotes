@@ -49,8 +49,11 @@
   *m(0, 1) = 1;
   *m(0, 2) = 2;
   *m(0, 3) = 3;
-
-
+* 动态大小矩阵与固定大小矩阵
+  Fixed-size means that the numbers of rows and columns are known are compile-time. In this case, Eigen allocates the array of coefficients as a fixed-size array, as a class member. This makes sense for very small matrices, typically up to 4x4, sometimes up to 16x16. Larger matrices should be declared as dynamic-size even if one happens to know their size at compile-time.
+* _MaxRows and _MaxCols参数的使用
+  In most cases, one just leaves these parameters to the default values.These parameters mean the maximum size of rows and columns that the matrix may have. They are useful in cases when the exact numbers of rows and columns are not known are compile-time, but it is known at compile-time that they cannot exceed a certain value. This happens when taking dynamic-size blocks inside fixed-size matrices: in this case _MaxRows and _MaxCols are the dimensions of the original matrix, while _Rows and _Cols are Dynamic.
+* 文件CwiseNullaryOp.h中return type of the Ones(), Zero(), Constant(), Identity() and Random() methods
 
 
 

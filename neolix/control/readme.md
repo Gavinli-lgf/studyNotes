@@ -20,6 +20,10 @@
 16. 参照永聪之前分析的数据内容，没有的都加上；且注意每个日志信息的唯一性，方便搜索。
 17. 合理使用好“标志位”来打印细节处的日志信息。
 
+20220501
+18. MatrixInit()中，对"matrix_a_(1, 2)"初始化时，C<sub>f</sub>与C<sub>r</sub>没有乘2，是当成2个轮胎的总刚度了。但是有的地方是当成1个轮胎的刚度算的。比如SteerComponentCalc()中，对转向率kv_的计算中，却把C<sub>f</sub>与C<sub>r</sub>乘2，当成1个车轮的刚度来处理了。（具体可以对比《车辆动力学及控制》中的公式）
+19. 
+
 ## lqr_lateral_controller理论知识需要完善的地方
 1. 正向行驶、倒车行驶时的control逻辑与运算方式都是相同的吗？
 2. SteerComponentCalc()中，对于倒车时，steer_angle_lateral_contribution_变量的处理原理要搞清。
