@@ -20,6 +20,9 @@
 * [常用的Laplace变换公式](https://blog.csdn.net/qq_29695701/article/details/105993116)
 * [Laplace变化公式的简单推导](https://zhuanlan.zhihu.com/p/36980082)
 
+# dlqr()
+* 离散lqr计算使用的Matrix Difference Riccati Equation，一般迭代几十次就可以收敛；
+* Matrix Difference Riccati Equation有2种表示形式，但是不同表示形式的计算量不同（参考老王视频）；
 
 # linear operation
 * "AB"两个矩阵的“点乘”能成立的前提条件是“A的列数 == B的行数”。（而“A的行数”、“B的列数”这两个因素不用管）
@@ -54,6 +57,15 @@
 * _MaxRows and _MaxCols参数的使用
   In most cases, one just leaves these parameters to the default values.These parameters mean the maximum size of rows and columns that the matrix may have. They are useful in cases when the exact numbers of rows and columns are not known are compile-time, but it is known at compile-time that they cannot exceed a certain value. This happens when taking dynamic-size blocks inside fixed-size matrices: in this case _MaxRows and _MaxCols are the dimensions of the original matrix, while _Rows and _Cols are Dynamic.
 * 文件CwiseNullaryOp.h中return type of the Ones(), Zero(), Constant(), Identity() and Random() methods
+* block()的使用：block(Index startRow, Index startCol, Index blockRows, Index blockCols)中：
+  1. /// \param startRow the first row in the block
+  2. /// \param startCol the first column in the block
+  3. /// \param blockRows the number of rows in the block
+  4. /// \param blockCols the number of columns in the block
+* 
+
+
+
 
 
 
