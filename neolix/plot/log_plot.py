@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # By yongcong.wang @ 31/03/2021
 
+from numpy import size
 import pandas as pd
 import matplotlib.pyplot as plt
 import math
@@ -133,19 +134,39 @@ def main():
     #plot_longitude(data)
     #plot_lateral(data)
 
-    data = pd.read_csv("./data/20220429-020837.csv")
+    data = pd.read_csv("./data/11-14-4.csv")
 
-    ax = data.plot(x="pt x", y="pt y")
-    data.plot(x="expect_x", y="expect_y", ax = ax)		#plot multiple info on one figure
+    #ax = data.plot(x="pt x", y="pt y")
+    #plt.scatter(data["pt x"], data["pt y"])
+    pt_x = data["pt x"]
+    pt_y = data["pt y"]
 
-    data.plot(y="expect_head")
+    x_index = [i for i in range(len(pt_x))]
 
-    ax = data.plot(y="curvature after filter")
-    data.plot(y="feed_forward", ax = ax)
+    x_begin = 0
+    x_delta = []
+    for x_now in pt_x:
+        if 0 != x_begin:
+            x_delta.append(x_now - x_begin)
+        else:
+            x_delta.append(0.0)
+            x_begin = x_now
+    
+    y_pre = 0
+    y_delta = []
+    for y_now in pt_y:
+        if 0 != y_pre:
+            y_delta.append(y_now - y_pre)
+        else:
+            y_delta.append(0.0)
+            y_pre = y_now
 
-    ax = data.plot(y="lateral_error")
-    ax = data.plot(y="head_error", ax = ax)
-    ax = data.plot(y="feedback", ax = ax)
+    # 在同一个figure上
+    #ax = plt.plot(x_index, x_delta, 'o')
+    #ax = plt.plot(x_index, y_delta, 'o')
+    ax = plt.plot(x_delta, y_delta, 'o')
+    ax = plt.plot(x_delta, data["chassis_speed"], 'o')
+    #plt.scatter(x_index, x_delta)
 
     plt.show()
 

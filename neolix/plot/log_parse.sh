@@ -2,7 +2,7 @@
 # By guofeng.li @ 08/04/2022
 
 #change LOG_FILE to your log file
-LOG_FILE="control.log.INFO.20220428-173343.21299"
+LOG_FILE="control.log.INFO.20220504-110922.26363"
 
 #1 support sectence, that is multiple words divided by space like "after ramp filter steer angle".
 #2 make sure how many times did the word appear in one circle, frequency in cycle means different time index.
@@ -18,23 +18,24 @@ WORDS=(
   #"current_acc"
   #"current_calc_throttle"
   #"current_calac_brake"
+  "chassis_speed"
 
   # lateral
+  #"lateral_contribution"
+  #"lateral_rate_contribution"
+  #"heading_contribution"
+  #"heading_rate_contribution"
+  #"lateral_evaluation"
+  #"heading_evaluation"
   "pt x"
   "pt y"
-  "expect_x"         #1846
-  "expect_y"         #1846
-  "expect_head"         #1846
-  "curvature after filter" #1846
-  "lateral_error"  #1846
-  "head_error"     #1846
-  "feedback"       #1846
-  "feed_forward"       #1846
-  #"curvature before filter"
 
   # other test datas
-  #"x"
-  #"y"
+  #"q[0]"
+  #"q[1]"
+  #"q[2]"
+  #"q[3]"
+  #"r[0]"
 )
 
 [ ! -d data ] && mkdir data
@@ -55,10 +56,7 @@ set -x
 # 后面2行打印到.csv文件中
 #reference url: https://www.cyberciti.biz/faq/grep-regular-expressions/
 for word in "${WORDS[@]}"; do
-  egrep " 18:03:*" ${LOG_FILE} \
-  | egrep "${word}:" \
-  | egrep -v "control.cpp:248" \
-  | egrep -v "Steer_Detail" \
+  egrep " 11:15:1" ${LOG_FILE} \
   | egrep -o "${word}: -*"'[[:digit:]]{1,}\.[[:digit:]]{1,}' \
       | egrep -o '\-*[[:digit:]]{1,}\.[[:digit:]]{1,}' \
       | awk -va="${word}" 'BEGIN{print a}; {print $1}' \
