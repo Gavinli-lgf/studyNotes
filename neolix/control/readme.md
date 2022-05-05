@@ -9,18 +9,13 @@
 7. GetRearPos()函数与相关的变量不再使用了，也可以删除调。
 8. lqr_lateral_controller_test.cpp -> 中的global_state变量可删除、对应global_state.txt文件可删除。
 9. LateralAutoCompensation()实际并没有调用，是否可以删除？还涉及的相关配置、变量、函数有：lateral_error_low_threshold、lateral_error_high_threshold、lateral_error_low_threshold_、InitializeLateralCompensation()。
-
-20220425 ：
 10. GetAbsoluteTimeLateralAndHeadingError() 中if (delta_time < 0.0) 后只保留LOG_WARN()，delta_time的计算删除。
 11. StateUpdate()中，lateral_error_rate_、heading_error_rate_两者的计算可以封装为子函数。
-20220429 ：
 13. “Steer_Detail, auto_mode:”的日志每10个cycle打印一次，其中大部分信息已有，这些已有的信息相互影响，不好分析；将只有此处有，其他地方没有的日志拿出来，每个cycle打印一次，此处的日志删除。（需打印的有4个steer_angle_*_contribution_变量，...）
 14. 同上，“msg->ShortDebugString().c_str()”也是相同的思路。
 15. 对定位信息，按"pt x" "pt y"的方式打印，不好理解。
 16. 参照永聪之前分析的数据内容，没有的都加上；且注意每个日志信息的唯一性，方便搜索。
 17. 合理使用好“标志位”来打印细节处的日志信息。
-
-20220501
 18. MatrixInit()中，对"matrix_a_(1, 2)"初始化时，C<sub>f</sub>与C<sub>r</sub>没有乘2，是当成2个轮胎的总刚度了。但是有的地方是当成1个轮胎的刚度算的。比如SteerComponentCalc()中，对转向率kv_的计算中，却把C<sub>f</sub>与C<sub>r</sub>乘2，当成1个车轮的刚度来处理了。（具体可以对比《车辆动力学及控制》中的公式）。应该改成与书中一致，都是1个轮胎刚度来处理。
 19. MatrixInit()中，“lqr_matrix_.matrix_a_coeff_(2, 3) = 1.0;”这一行是错误的。（虽然最终将matrix_a_coeff_与matrix_a_合并时，没用到(2, 3)这个元素，但是这一行多余，应删掉。）
 20. 
