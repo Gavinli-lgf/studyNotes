@@ -130,9 +130,23 @@ def plot_lateral(data):
 
 def main():
     #data = pd.read_csv("./DATA.csv")
-    data = pd.read_csv("./data/20220407-080101.csv")
     #plot_longitude(data)
-    plot_lateral(data)
+    #plot_lateral(data)
 
+    data = pd.read_csv("./data/20220429-020837.csv")
+
+    ax = data.plot(x="pt x", y="pt y")
+    data.plot(x="expect_x", y="expect_y", ax = ax)		#plot multiple info on one figure
+
+    data.plot(y="expect_head")
+
+    ax = data.plot(y="curvature after filter")
+    data.plot(y="feed_forward", ax = ax)
+
+    ax = data.plot(y="lateral_error")
+    ax = data.plot(y="head_error", ax = ax)
+    ax = data.plot(y="feedback", ax = ax)
+
+    plt.show()
 
 main()
