@@ -49,6 +49,27 @@ multiplied by a sinusoid, e<sup>st</sup> = e<sup>(σ+jω)t</sup> = e<sup>σt</su
 *  We can use the fact that we can multiply and divide transfer functions to simplify the feedback loops in systems, and by simplifying them we can start to understand how they affect the larger system.
 
 
+# 3 Block Diagrams
+## 3.2 The nomenclature (let’s all speak the same language)
+seven nomenclatures:arrows, blocks, summing junctions, take off points, nodes, paths, loops.
+1.  transfer functions are Single-Input, Single-Output (SISO) functions so it doesn’t make sense to have a block diagram with multiple inputs or multiple outputs.(也就是说，传递函数不仅整个系统是单输入单输出；就连系统中的每个传递函数的block，也都是SISO。但是传递函数系统框图中也能见到多输入多输出的框图，这些框图往往仅是一些简单的数学运算For example, a system might take the two inputs and simply multiply them together to generate the single output.但是这种运算框可以使用“Summing junctions and take off points”替换)。
+    State space representation does allow for multi-input, multi-output system.
+2. It is helpful to give names to and define some of the patterns that come up often in block diagrams.(Because even though the diagram above consists of only 4 different symbols, there is additional complexity in the patterns that are created. )
+3. Nodes are different from blocks. Summing junctions and blocks create new nodes (because they change the signal) but take off points do not. 
+4. two different paths:The forward path, Parallel paths.
+5. Four loop types:a closed loop system,  cascaded loops, Non-touching loops, overlapping or interlocked loops. (The classic feedback system is often called a closed loop system and you can see how it clearly meets the definition of a loop.)
+6. SUMMARY: The thing to remember is that block diagrams are created using just four symbols; arrows,
+blocks, take off points, and summing junctions. The rest of the terms we covered, and most of the complexities of block diagrams, come from the patterns that emerge from those four symbols.
+## 3.3 Block diagram algebra
+* remember that the algebra rules we will cover here are only possible if the system is LTI and that the systems
+are represented by transfer functions - that is, in the s domain.
+### 3.3.1 Why is LTI necessary?
+* Remember that LTI systems obey the properties of homogeneity, superposition, and time invariance. These properties are what allow us to move blocks around and simplify diagrams.
+* swapping the order of the blocks has no impact on the output.(but but the intermediate signals do change, and frequently lose their real physical meaning.)
+### 3.3.2 Why are transfer functions necessary?
+...
+
+
 
 
 

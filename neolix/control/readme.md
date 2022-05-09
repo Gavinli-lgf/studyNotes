@@ -19,6 +19,7 @@
 18. MatrixInit()中，对"matrix_a_(1, 2)"初始化时，C<sub>f</sub>与C<sub>r</sub>没有乘2，是当成2个轮胎的总刚度了。但是有的地方是当成1个轮胎的刚度算的。比如SteerComponentCalc()中，对转向率kv_的计算中，却把C<sub>f</sub>与C<sub>r</sub>乘2，当成1个车轮的刚度来处理了。（具体可以对比《车辆动力学及控制》中的公式）。应该改成与书中一致，都是1个轮胎刚度来处理。
 19. MatrixInit()中，“lqr_matrix_.matrix_a_coeff_(2, 3) = 1.0;”这一行是错误的。（虽然最终将matrix_a_coeff_与matrix_a_合并时，没用到(2, 3)这个元素，但是这一行多余，应删掉。）
 20. 将LqrLateralController::Control()中根据定位或chasis获取的实时车速打印到log.
+21. 纵向控制GetSpeedControlRegular()中，日志“"curr_v: %.4f, target_v:”打印多次，多余了。
 
 ## lqr_lateral_controller理论知识需要完善的地方
 1. 正向行驶、倒车行驶时的control逻辑与运算方式都是相同的吗？
