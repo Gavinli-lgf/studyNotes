@@ -22,7 +22,19 @@
 3. 仿真
 * simulink的框图也能很好的对系统有个认知。
 * 模型预测控制原理图
-* 
+
+# [OSQP](https://osqp.org/docs/examples/mpc.html) 
+简写（OASES 简写“online active set strategy”）
+## [a parametric active-set algorithmfor quadratic programming](https://link.springer.com/article/10.1007/s12532-014-0071-1)
+* Abstarct: One relatively recent approach to solve QP problems are parametric active-set methods that are based on tracing the solution along a linear homotopy between a QP problem with known solution and the QP problem to be solved. This approach seems to make them particularly suited for applications where a-priori information can be used to speed-up the QP solution or where high solution accuracy is required. In this paper we describe the open-source C++ software package qpOASES, which implements a parametric active-set method in a reliable and efficient way.主要应用于small- to medium-scale convex test examples, Finally, we describe how qpOASES can be used to compute critical points of nonconvex QP problems（也可用于非凸问题）.
+1. Introduction
+* This paper describes the current release 3.0 of the open-source software package [qp OASES](https://github.com/coin-or/qpOASES).This software package implements a parametric active-set method for solving convex quadratic programming (QP) problems and for computing critical points of nonconvex quadratic programming problems.Linear model predictive control (MPC)(说明MPC应用与线性系统吗？) As MPC is frequently applied to processes with very fast dynamics, it becomes crucial to solve the resulting convex QP problems at very high rates; possibly within a millisecond or less [57]. Moreover, as MPC controllers typically need to run autonomously without further user-interaction, QP solution needs to be highly reliable.
+* We consider quadratic programming problems of the following form：（见论文，与[《一个模型预测控制（MPC）的简单是线.docx》]()中推导的格式相同）. A quadratic program of the form (1) is convex (strictly convex) if and only if its Hessian matrix H is positive semidefinite (positive definite); it is nonconvex otherwise. 
+* Existing methods： active-set and interior-point methods,  fast gradient methods. Interior-point methods are mainly used in two different variants: primal barrier methods and primal-dual methods.  Active-set methods can be divided into primal, dual, and parametric methods. The current state vector v0 is repeatedly estimated from real-world measurements, and at each sampling instant problem (6) is solved on-line to find the optimal feedback control u0 ∈ Rn u . This optimized control is then used to control the process, until the next, more recent feedback control has been computed from the next state observation.
+
+
+
+
 # [MPC APOLLO](https://blog.csdn.net/u013914471/article/details/83824490)
 ## 理论分析
 * Apollo中MPC controller的代码主体集成了横、纵向控制，在计算控制命令时，计算了横、纵向误差。
