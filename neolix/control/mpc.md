@@ -31,9 +31,11 @@
 * This paper describes the current release 3.0 of the open-source software package [qp OASES](https://github.com/coin-or/qpOASES).This software package implements a parametric active-set method for solving convex quadratic programming (QP) problems and for computing critical points of nonconvex quadratic programming problems.Linear model predictive control (MPC)(说明MPC应用与线性系统吗？) As MPC is frequently applied to processes with very fast dynamics, it becomes crucial to solve the resulting convex QP problems at very high rates; possibly within a millisecond or less [57]. Moreover, as MPC controllers typically need to run autonomously without further user-interaction, QP solution needs to be highly reliable.
 * We consider quadratic programming problems of the following form：（见论文，与[《一个模型预测控制（MPC）的简单是线.docx》]()中推导的格式相同）. A quadratic program of the form (1) is convex (strictly convex) if and only if its Hessian matrix H is positive semidefinite (positive definite); it is nonconvex otherwise. 
 * Existing methods： active-set and interior-point methods,  fast gradient methods. Interior-point methods are mainly used in two different variants: primal barrier methods and primal-dual methods.  Active-set methods can be divided into primal, dual, and parametric methods. The current state vector v0 is repeatedly estimated from real-world measurements, and at each sampling instant problem (6) is solved on-line to find the optimal feedback control u0 ∈ Rn u . This optimized control is then used to control the process, until the next, more recent feedback control has been computed from the next state observation.
-
-
-
+2. Algorithm
+4. Software design and algorithmic parameters
+* cold-start & hot-start: qpOASES distinguishes two different ways of solving a QP problem of the form (1).First, it can be solved by performing a cold-start, i.e. without any prior solution information. This is the usual situation if just a single QP problem is to be solved. Second,provided that a QP problem with same dimensions has been already solved before,the current QP problem can be solved by performing a hot-start based on the optimal solution and the internal matrix factorizations of the previously solved QP problem.
+* three different QP solver classes:  The QProblem class, The class QProblemB, the class SQProblem. 
+* offer user-functions, All internal data members are hidden from the user.
 
 # [MPC APOLLO](https://blog.csdn.net/u013914471/article/details/83824490)
 ## 理论分析
