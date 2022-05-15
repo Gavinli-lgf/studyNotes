@@ -20,52 +20,10 @@
 * [常用的Laplace变换公式](https://blog.csdn.net/qq_29695701/article/details/105993116)
 * [Laplace变化公式的简单推导](https://zhuanlan.zhihu.com/p/36980082)
 
-# dlqr()
-* 离散lqr计算使用的Matrix Difference Riccati Equation，一般迭代几十次就可以收敛；
-* Matrix Difference Riccati Equation有2种表示形式，但是不同表示形式的计算量不同（参考老王视频）；
-
-# linear operation
-* "AB"两个矩阵的“点乘”能成立的前提条件是“A的列数 == B的行数”。（而“A的行数”、“B的列数”这两个因素不用管）
-
-# Eigen的使用
-* 矩阵的定义形式有2种：Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols>、Matrix2d；
-  1. Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols>的形式，只要指明3个参数_Scalar、_Rows、_Cols即可，其他的可不管。
-  2. Matrix2d也有多种形式，具体形式如下：
-  *\li \c Matrix2d is a 2x2 square matrix of doubles (\c Matrix<double, 2, 2>)
-  *\li \c Vector4f is a vector of 4 floats (\c Matrix<float, 4, 1>)
-  *\li \c RowVector3i is a row-vector of 3 ints (\c Matrix<int, 1, 3>)
-  *
-  *\li \c MatrixXf is a dynamic-size matrix of floats (\c Matrix<float, Dynamic, Dynamic>)
-  *\li \c VectorXf is a dynamic-size vector of floats (\c Matrix<float, Dynamic, 1>)
-  *
-  *\li \c Matrix2Xf is a partially fixed-size (dynamic-size) matrix of floats (\c Matrix<float, 2, Dynamic>)
-  *\li \c MatrixX3d is a partially dynamic-size (fixed-size) matrix of double (\c Matrix<double, Dynamic, 3>)
-注：MatrixXf is a dynamic-size matrix of floats (\c Matrix<float, Dynamic, Dynamic>) //说明“MatrixXf”是一个动态矩阵，但不一定是方阵。
-* 矩阵的访问：You can access elements of vectors and matrices using normal subscripting:
-  *Eigen::VectorXd v(10);
-  *v[0] = 0.1;
-  *v[1] = 0.2;
-  *v(0) = 0.3;
-  *v(1) = 0.4;
-  *
-  *Eigen::MatrixXi m(10, 10);
-  *m(0, 1) = 1;
-  *m(0, 2) = 2;
-  *m(0, 3) = 3;
-* 动态大小矩阵与固定大小矩阵
-  Fixed-size means that the numbers of rows and columns are known are compile-time. In this case, Eigen allocates the array of coefficients as a fixed-size array, as a class member. This makes sense for very small matrices, typically up to 4x4, sometimes up to 16x16. Larger matrices should be declared as dynamic-size even if one happens to know their size at compile-time.
-* _MaxRows and _MaxCols参数的使用
-  In most cases, one just leaves these parameters to the default values.These parameters mean the maximum size of rows and columns that the matrix may have. They are useful in cases when the exact numbers of rows and columns are not known are compile-time, but it is known at compile-time that they cannot exceed a certain value. This happens when taking dynamic-size blocks inside fixed-size matrices: in this case _MaxRows and _MaxCols are the dimensions of the original matrix, while _Rows and _Cols are Dynamic.
-* 文件CwiseNullaryOp.h中return type of the Ones(), Zero(), Constant(), Identity() and Random() methods
-* block()的使用：block(Index startRow, Index startCol, Index blockRows, Index blockCols)中：
-  1. /// \param startRow the first row in the block
-  2. /// \param startCol the first column in the block
-  3. /// \param blockRows the number of rows in the block
-  4. /// \param blockCols the number of columns in the block
-* 
+[控制理论解释了上述3中变换](https://www.academia.edu/44356138/The_Fundamentals_of_Control_Theory_by_Brian_Douglas)
 
 
+# 拉格朗日
+1. 拉格朗日乘数：拉格朗日乘数法（英語：Lagrange multiplier，以数学家约瑟夫·拉格朗日命名），在数学中的最优化问题中，是一种寻找多元函数在其变量受到一个或多个条件的约束时的极值的方法。这种方法可以将一个有n个变量与k个约束条件的最优化问题转换为一个解有n + k个变量的方程组的解的问题。这种方法中引入了一个或一组新的未知数，即拉格朗日乘数，又称拉格朗日乘子，或拉氏乘子，它们是在转换后的方程，即约束方程中作为梯度（gradient）的线性组合中各个向量的系数。 比如，要求f(x, y),在g(x,y)=0时的最大值时，我们可以引入新变量拉格朗日乘数 λ，这时我们只需要下列拉格朗日函数的极值：
 
-
-
-
+    L ( x , y , λ ) = f ( x , y ) − λ ⋅ g ( x , y )
