@@ -42,3 +42,57 @@
 * “车辆侧偏角”区别于“轮胎侧偏角”
 * 
 
+1. control失败，会产生什么效果？
+	答：以GetAbsoluteTimeLateralAndHeadingError()为例，失败后会导致estop、hard_estop、ESTOP_CONTROLFAIL。（hard_estop:65%; soft_estop:45%;）
+2. trajectory每次都是以子车位置为规划起点。（reference_line时，以routing上离ego最近的位置为规划起点）。
+3. trajectory是100Hz，即使按最大7m/s算，一般trajectory的前0.7m范围内，都能找到最近点。（0.5m的预瞄，一般处理长度不会超过trajectory的前1.2m范围。）
+4. trajectory是最大0.1s的周期，人眼300ms，肉眼无法识别起点与自车不重合。
+5. 正常planning_time > curr_time，delta_time > 0。这个逻辑保证了预瞄点的预瞄时间是在current_time与cur_index分别对应delta_time中取的最大值。
+6. 如果快到达routing终点或者其他trajectory点较少的情况，此时找预瞄点会失败。
+7. 找到预瞄点后，就要计算state_matrix:
+（1）lateral_error：需要5个量就能计算出来。自车位置(x,y)、预瞄点位置(x_t,y_t)、预瞄点的heading_t。通过"x, y, x_t, y_t, heading_t"这5个量可以计算出自车在sl坐标系下的横向误差lateral_error（单位:m）。
+（2）heading_error：需要5个量就能计算出来。定位的姿态信息(qx,qy,qz,qw)，预瞄点的heading_t。通过"qx,qy,qz,qw,heading_t"这5个量，算出heading_error，其在FLU、ENU、SL坐标系下值都相同。（单位:rad。所以heading_error最大值不能超过0.523，因为这是前轮最大转角30度。）
+（3）lateral_error_rate_：横向误差变化率，就等于当前车速在sl坐标系下，沿预瞄点l方向的投影。（因此只与2个因素有关：当前车速、朝向误差。）
+（4）heading_error_rate_：横摆误差变化率，就等于“车辆自身的横摆角速度 - 道路曲率产生的横摆角速度”。（因此与3个因素有关：自车姿态信息<横摆角速度>、车速、道路曲率）。
+（5）注意：这里的state是根据两个预瞄点信息混用计算出来的。这样会有问题吧？！
+8. GetAbsoluteTimeLateralAndHeadingError()中预瞄时间决定了至少，预瞄点至少在最近点0.5s后；但是日志中打印的record_x,record_y,record_head，记录的是0.1s后的点，也就是说，下一次trajectory更新时，车辆应该到达的位置。
+（1）所以“record_x,record_y,record_head”与预瞄点的(x,y),heading还不一样。
+（2）“record_x,record_y,record_head”除了打印，并无其他作用。
+9. 正常一次trajectory有400个点（20ms一个点，总时长8s。）
+10. 前馈的预瞄点和反馈的预瞄点可能不一样。在车辆车辆速度<2.1，或者low_speed_control时，两者相同；其他情况下不同，前馈按照配置文件找，反馈计算而来。
+
+## control中档位切换的逻辑整理：
+搜索“cmd.set_gear_location”或“cmd->set_gear_location”，出现次数多，但是总的处理逻辑就如下5处。
+1. 每次control模块启动时，执行一次。（初始化时要start了，就GEAR_DRIVE，否则就GEAR_NEUTRAL）
+2. 从list中获取status、trajectory失败时，都"cmd->set_gear_location(last_gear_planning_)"。
+3. ResetDrivingCmd时，cmd.set_gear_location(last_gear_planning_);
+4. 当process estop时，会cmd.set_gear_location(last_gear_planning_)  （**经常触发调用**）
+5. 只要在正常的while循环中，且list中有status与trajectory，且没被pad重置，就会调用UpdateGear()，那么一定会触发其中之一的cmd.set_gear_location()逻辑。（**经常触发调用**）
+
+6. 总结而言，就3种情况会设置档位：
+（1）保持上次档位不变。（处理estop时走这个逻辑，其他情况不用太关注）
+（2）其他信息都正常，但是chasis或trajectory丢失gear信息时，低速则置P档；高速设置N档。
+（3）正常根据trajectory的规划要求去切换档位。（此时注意一些中间过渡档位。）
+注：日志更改后，搜索关键词“set gear”。
+
+## control对trajectory的要求
+1. 从速度与预瞄点的选取来看：
+（1）速度deadzone，要求规划速度> 0.1；
+（2）泊车等低速模式下，trajectory最短0.1m；其他模式下根据速度不同，对最短距离要求不同，速度区间分别为0~2~3~5~max者4个区间，对应最短长度分别为：0.3m 1.0m 2.0m 3.0m。
+（3）纵向预瞄点可根据速度不同进行插值来选择不同的预瞄点，但是目前都是按照0.3m的预瞄距离、0.3s的预瞄时间来选取的。
+（4）横向预瞄点也可根据速度不同进行插值选择不同的预瞄点，目前速度v与预瞄距离、预瞄时间的对应关系为：0.0~2.5m/s时，lateral_preview_time: 0.5，min_preview_dis: 0.5；3.0~7.0m/s时，lateral_preview_time: 0.3，min_preview_dis: 0.3。
+
+## control设置刹车指令的逻辑
+1. 刹车的逻辑点有4个：（通过搜索“set_brake”进行定位）
+（1）pid_lon_controller中，计算与其他所有处理完成后，cmd.set_brake。
+（2）有estop时，会cmd.set_brake。
+（3）当“when there is an obstacle for 10 minutes the gear_location is Parking”时，会cmd.set_brake。
+（4）reset cmd时，会cmd.set_brake(0)。
+其中需要细化理解的点有：
+（1）pid_lon_controller中有2中情况：纵向控制时，根据计算处的acc计算brake；横向控制时，如果转角过大，也会限制acc到-2（对应brake约为22%）。
+（2）有estop时，分2种情况处理：如果需要smooth_estop_brake时，就从当前刹车值开始，每个周期增加1%，最大增加到hard_estop_brake(65%)或soft_estop_brake(45%)。
+如果不需要smooth时，直接根据当前brake值与estop_brake值之间取一个max值，直接写入到cmd中。（当然estop_brake分soft与hard。）
+（3）当车辆正好在障碍物或者斜坡上时，根据当前的档位状态是否会溜车，确定是否需要刹车，并设置刹车值。
+
+
+
