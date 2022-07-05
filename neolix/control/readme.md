@@ -55,9 +55,6 @@
 11. 一般汽车都会轻度转向不足（为了安全），而赛车一般调校为中性转向（为了更灵敏的转向效果）。
 
 
-
-
-
 1. [车辆航向角、横摆角、质心侧偏角](https://blog.csdn.net/qq_31880107/article/details/86542879)
 
 
@@ -142,11 +139,57 @@
 4. 根据预瞄点曲率，计算前馈转角的公式：...。
 5. 根据前轮转角，计算当前
 
+## 定位相关内容：
+1. 缩略语：
+  1. “dr”: localization_dr、DRResult等中的“dr”是“dead reckoning”的缩写，汉语意思“航位推导”。即odometry位置就是通过航位推导获得的。所以proto文件localization_dead_reckoning.proto就是odometry的定位信息。
+  2. "pnt"：localization_gnss_pnt_result.proto文件中的“pnt”是“Positioning, Navigation and Timing Systems”首字母的缩写，就是卫星定位信息。最终处理后的卫星定位信息在localization_pose.proto文件中。
+  3. "rtk":"Real-time kinematic positioning"实时运动定位。
+  4. “FCW”：Forward Collision Warning (FCW)前方碰撞预警系统。
+  5. “DRIFT”：drift，漂移、侧滑、甩尾。（在这里指“定位的漂移”）
+  6. "EPB"：“Electrical Park Brake”电子驻车制动的简称。该系统可以实现“静态驻车、静态释放（关闭）、自动时放（关闭）、自动驻车、动态驻车”，但是Neolix上的功能还不清楚。
+  7. "4WS":四輪轉向（英語：Four-wheel steering, 4WS）指後軸同樣具備轉向能力.
+
+
+2. 根据[飞书世界模型](https://r3c0qt6yjw.feishu.cn/wiki/wikcnTx1NZnwmdrMuBg5MjojFgc)中的定义：
+  * “base_link坐标系”，是随车而动的，原点在后轴中心，FLU为方向；
+  * “imu坐标系”，随车而动的，方向为RFU；（IMU提供的是一个相对的定位信息，它的作用是测量相对于起点物体所运动的路线，所以它并不能提供你所在的具体位置的信息，因此，它常常和GPS一起使用，当在某些GPS信号微弱的地方时，IMU就可以发挥它的作用，可以让汽车继续获得绝对位置的信息，不至于“迷路”。）
+  * “odometry坐标系”，全局坐标系，原点固定，一般说车辆在Odometry的位置和位姿指的是base_link在Odometry的位置和位姿！
+  * “UTM坐标系”，全局坐标系，原点不固定，取每次车辆启动时的位置为原点，方向ENU，Position of the vehicle reference point (IMU) in the map reference frame.
+3. [IMU](https://zhuanlan.zhihu.com/p/98113366)：IMU通常包含陀螺仪(Gyroscope)、加速度计(Accelermeters)，有的还包含磁力计(Magnetometers)。陀螺仪用来测量三轴的角速度，加速度计用来测量三轴的加速度，磁力计提供朝向信息。因此IMU可以测量3个方面的信息：物體三軸姿態角（或角速率）、三轴加速度、朝向信息。（三轴加速第常用于于GPS融合定位；三轴姿态、朝向信息用于车身姿态的计算，用于车辆模型的计算。实际车辆朝向heading，也是从定位IMU的四元数中获得的。）
+    一般的，一個IMU內會裝有三軸的陀螺儀和三個方向的加速度計，來測量物體在三維空間中的角速度和加速度，並以此解算出物體的姿態。為了提高可靠性，還可以為每個軸配備更多的傳感器。一般而言IMU要安裝在被測物體的重心上。 
+  * 原理：机体坐标，一般计算位置信息，需要将其通过姿态角（roll、pitch、yaw）转换到导航坐标下去，然后减去重力加速度，得到线性加速度后再去积分。
+  * IMU提供的是一个相对的定位信息，它的作用是测量相对于起点物体所运动的路线，所以它并不能提供你所在的具体位置的信息，因此，它常常和GPS一起使用，当在某些GPS信号微弱的地方时，IMU就可以发挥它的作用，可以让汽车继续获得绝对位置的信息。
+  * 众所周知，GPS可以为车辆提供精度为米级的绝对定位，差分GPS或RTK GPS可以为车辆提供精度为厘米级的绝对定位，然而并非所有的路段在所有时间都可以得到良好的GPS信号。因此，在自动驾驶领域，RTK GPS的输出一般都要与IMU，汽车自身的传感器（如轮速计、方向盘转角传感器等）进行融合。(GPS：数据准确，更新频率低，100Hz；IMU：更新频率高，但误差随着时间增长而变大；因此可用GPS每100ms修正一次汽车的实际位置，而IMU在两个100ms之间预测9次，两者结合可以提供很准确的100Hz的定位结果。)
+4. Odometry:
+    [Odometry Introduction](https://chargerkong.github.io/2021/09/09/0909%E9%85%8D%E7%BD%AE%E9%87%8C%E7%A8%8B%E8%AE%A1/)
+    里程计系统根据机器人的运动提供了机器人的姿态和速度的局部精确估计。里程表信息可以从各种来源获得，如IMU、LIDAR、RADAR、VIO和轮编码器。需要注意的是，imu随时间漂移，而轮式编码器随移动距离漂移，因此它们经常被一起使用来抵消彼此的负面特性。
+    odom坐标系和与之相关的变换使用机器人的里程计系统发布连续的定位信息，但随着时间或距离(取决于传感器的形态和漂移)变得不那么准确。尽管如此，机器人仍然可以利用这些信息在其附近导航(例如避免碰撞)。为了在一段时间内获得一致准确的里程数信息，地图框架提供了全球准确的信息，用于校正odom框架。
+
+# 泊车相关内容：
+## Reeds-Shepp和Dubins曲线简介
+**无障碍物时**
+1. 什么是Reeds-Shepp曲线：要把车停到车位里，想找一条最短的路径把车停进去，该最短路径就是Reeds-Shepp曲线。Reeds-Shepp曲线由Reeds和Shepp二人在1990年的论文《Optimal paths for a car that goes both forwards and backwards》中提出。
+2. Reeds-Shepp曲线是什么样的曲线：由于汽车都有一个最小转向半径，当汽车从不同的初始位置和朝向进入同一个停车位时，Reeds-Shepp曲线一般是由几段半径固定的圆弧和一段直线段拼接组成，而且圆弧的半径就是汽车的最小转向半径。这里的路径长度是指汽车中心运动轨迹的长度，也就是所有圆弧的弧长和直线段的长度之和。
+3. 什么是Dubins曲线：Dubins曲线和Reeds-Shepp曲线差不多，只不过多了一个约束条件：汽车只能朝前开，不能后退（不能挂倒挡）。
+4. Reeds-Shepp曲线和Dubins曲线对任意的起止位姿都是存在的。（二者有时是重合的）
+5. Reeds-Shepp曲线和Dubins曲线特指没有障碍物时的最短路径。如果存在障碍物，那么这样的曲线不再是传统意义上的RS和Dubins曲线了，不过为了保持一致我们还是这么称呼它们吧。
+**有障碍物时**
+1. 有障碍物的情况，对于RS曲线、Dubins曲线的情况是不同的：
+  * RS曲线：只要存在连接起止位姿的无碰撞路径，那么就存在无碰撞的Reeds-Shepp曲线。
+  * Dubins曲线：然而这个结果对Dubins曲线却不适用。
+**Reeds-Shepp和Dubins曲线的启发**
+  Reeds-Shepp和Dubins曲线只不过是最优曲线的两个特殊情况，我们可以考虑各种各样的机器人约束或者目标函数，这时的曲线就更有意思了，当然也更难了。Reeds-Shepp和Dubins曲线之所以有名，是因为它们刚好存在解析形式，而且形式还不是太复杂，类似的曲线还有Balkcom-Mason曲线。其它更复杂的最优曲线要想求解析解是非常困难的。
+
 
 # 涉及的理论知识：
 1. [OptimalTrajectoryGenerationforDynamicStreetScenariosinaFrenetFrame](https://www.cnblogs.com/kin-zhang/p/15006838.html)用于...。
 2. [黄金分割搜索算法（一维搜索算法）](https://en.wikipedia.org/wiki/Golden-section_search)，用于control求轨迹中最近点的插值方法。
-3. 
+3. [IMU：自动驾驶定位系统最后一道防线](https://www.autoinfo.org.cn/autoinfo_cn/content/news/20191230/1856850.html)
+4. [无人驾驶中用到的八大坐标系](https://cloud.tencent.com/developer/news/404364)
+5. [Reeds-Shepp和Dubins曲线简介](https://blog.csdn.net/robinvista/article/details/95137143)
+6. Reeds-Shepp和Dubins曲线相关论文：
+[1]　Optimal Paths for a Car That Goes both Forwards and Backwards，J. A. Reeds and L. A. Shepp，Pacific Journal of Mathematics.
+[2]　On Curves of Minimal Length with a Constraint on Average Curvature, and with Prescribed Initial and Terminal Positions and Tangents，Lester E. Dubins，American Journal of Mathematics.
 
 
 
